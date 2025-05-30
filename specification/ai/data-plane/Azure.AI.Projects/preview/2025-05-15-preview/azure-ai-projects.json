@@ -2363,12 +2363,30 @@
           "additionalProperties": {
             "$ref": "#/definitions/EvaluatorConfiguration"
           }
+        },
+        "target": {
+          "$ref": "#/definitions/EvaluationTarget",
+          "description": "Evaluation target specifies the type and configuration of the target to be used for this evaluation."
         }
       },
       "required": [
         "id",
         "data",
         "evaluators"
+      ]
+    },
+    "EvaluationTarget": {
+      "type": "object",
+      "description": "Abstract base model for evaluation targets.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The type of the evaluation target."
+        }
+      },
+      "discriminator": "type",
+      "required": [
+        "type"
       ]
     },
     "EvaluatorConfiguration": {
@@ -2394,6 +2412,24 @@
       },
       "required": [
         "id"
+      ]
+    },
+    "FewShotExample": {
+      "type": "object",
+      "description": "Few-shot example for response generation.",
+      "properties": {
+        "user": {
+          "type": "string",
+          "description": "The user message in the example."
+        },
+        "assistant": {
+          "type": "string",
+          "description": "The assistant message in the example."
+        }
+      },
+      "required": [
+        "user",
+        "assistant"
       ]
     },
     "FieldMapping": {
@@ -2973,6 +3009,45 @@
         "id",
         "target"
       ]
+    },
+    "ResponseGenerationTarget": {
+      "type": "object",
+      "description": "Target for response generation evaluation.",
+      "properties": {
+        "systemMessage": {
+          "type": "string",
+          "description": "The system message to be used for the response generation."
+        },
+        "fewShotExamples": {
+          "type": "array",
+          "description": "Few-shot examples to provide context for the response generation.",
+          "items": {
+            "$ref": "#/definitions/FewShotExample"
+          },
+          "x-ms-identifiers": []
+        },
+        "modelDeploymentName": {
+          "type": "string",
+          "description": "The name of the model deployment to use for response generation."
+        },
+        "modelParams": {
+          "type": "object",
+          "description": "Model parameters for the response generation.",
+          "additionalProperties": {}
+        }
+      },
+      "required": [
+        "systemMessage",
+        "fewShotExamples",
+        "modelDeploymentName",
+        "modelParams"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/EvaluationTarget"
+        }
+      ],
+      "x-ms-discriminator-value": "responseGeneration"
     },
     "RiskCategory": {
       "type": "string",

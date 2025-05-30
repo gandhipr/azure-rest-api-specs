@@ -78,6 +78,9 @@ model Evaluation {
 
   @doc("Evaluators to be used for the evaluation.")
   evaluators: Record<EvaluatorConfiguration>;
+
+  @doc("Evaluation target specifies the type and configuration of the target to be used for this evaluation.")
+  target?: EvaluationTarget;
 }
 
 @doc("Definition for sampling strategy.")
@@ -175,4 +178,52 @@ model AgentEvaluation {
 
   @doc("The agent evaluation result.")
   result?: Array<AgentEvaluationResult>;
+}
+
+/** 
+ * Abstract base model for evaluation targets.
+ */
+@doc("Abstract base model for evaluation targets.")
+@discriminator("type")
+@added(Versions.v2025_05_15_preview)
+model EvaluationTarget {
+  /** The type of the evaluation target. */
+  type: string;
+}
+
+/** 
+ * Target for response generation evaluation.
+ * Represents the configuration and context for a response generation evaluation target.
+ */
+@doc("Target for response generation evaluation.")
+@added(Versions.v2025_05_15_preview)
+model ResponseGenerationTarget extends EvaluationTarget {
+  /** The type of the evaluation target. Always 'responseGeneration'. */
+  type: "responseGeneration";
+
+  /** The system message to be used for the response generation. */
+  systemMessage: string;
+
+  /** Few-shot examples to provide context for the response generation. */
+  fewShotExamples: Array<FewShotExample>;
+
+  /** The name of the model deployment to use for response generation. */
+  modelDeploymentName: string;
+
+  /** Model parameters for the response generation. */
+  modelParams: Record<unknown>;
+}
+
+/** 
+ * Few-shot example for response generation.
+ * Represents a user/assistant example pair.
+ */
+@doc("Few-shot example for response generation.")
+@added(Versions.v2025_05_15_preview)
+model FewShotExample {
+  /** The user message in the example. */
+  user: string;
+
+  /** The assistant message in the example. */
+  assistant: string;
 }
